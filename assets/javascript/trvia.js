@@ -4,6 +4,10 @@
 let triviaList = [],
   triviaStep = 0,
   answer = '',
+  timer = 31,
+  questions = 10,
+  isTimerRunning = false,
+  timerID = '',
   score = 0;
 
 /////////////////////////////////////////////
@@ -76,6 +80,10 @@ function showTriviaOnScreen(triviaItem) {
   $('#trivia').empty();
   $('#choices').empty();
 
+  // reset and start timer again
+  timer = 31;
+  timerStart();
+
   // display the trivia question
   $('#trivia').append("<p class='lead'>" + triviaItem.question + '</p>');
 
@@ -97,7 +105,12 @@ function showTriviaOnScreen(triviaItem) {
     $('#choices').append("<p class='choices-style'>" + newChoices[i] + '</p>');
   }
 
+  // show game status
+  //$('#timer').text(timer);
+  $('#score').text(score);
+  $('#questCount').text(questions);
   // incremet triviaStep to move on to next question
+  questions--;
   triviaStep++;
 }
 
@@ -108,6 +121,11 @@ function nextTrivia() {
   } else {
     // no more trivia
     console.log('no more trivia');
+
+    // stop the timer
+    isTimerRunning = false;
+    clearInterval(timerID);
+
     // show game score and play again button
     $('#trivia').empty();
     $('#choices').empty();
@@ -140,7 +158,7 @@ function nextTrivia() {
 // The onClick Functions
 /////////////////////////////////////////////
 function isCorrect(event) {
-  if (convertHTMLEntity(answer) == event) {
+  if (convertHTMLEntity(answer) == convertHTMLEntity(event)) {
     console.log('you got it');
     return true;
   }
@@ -157,6 +175,14 @@ function gameTime(event) {
   console.log('converted answer: ' + convertHTMLEntity(answer));
   console.log('this.html = ' + $(this).html());
 
+  // stop the timer
+  isTimerRunning = false;
+  clearInterval(timerID);
+
+  // reset and start timer again
+  timer = 31;
+  timerStart();
+
   if (isCorrect($(this).html())) {
     // increment score then show next trivia
     score++;
@@ -168,11 +194,35 @@ function gameTime(event) {
 }
 
 function resetGame() {
-  // reset score
+  // reset score, timer and question count
   score = 0;
+  timer = 31;
+  questions = 10;
+
+  // reload browser
   window.location.reload(true);
 }
 
+function timerStart() {
+  if (!isTimerRunning) {
+    isTimerRunning = true;
+    timerID = setInterval(updateTimerDisplay, 1000);
+  }
+}
+
+function updateTimerDisplay() {
+  timer--;
+
+  if (timer <= 0) {
+    // stop the timer
+    isTimerRunning = false;
+    clearInterval(timerID);
+
+    nextTrivia();
+  }
+
+  $('#timer').text(timer);
+}
 /////////////////////////////////////////////
 // Start this shit up!
 /////////////////////////////////////////////
