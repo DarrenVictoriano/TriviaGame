@@ -4,7 +4,7 @@
 let triviaList = [],
   triviaStep = 0,
   answer = '',
-  timer = 31,
+  timer = 21,
   questions = 10,
   isTimerRunning = false,
   timerID = '',
@@ -81,8 +81,7 @@ function showTriviaOnScreen(triviaItem) {
   $('#choices').empty();
 
   // reset and start timer again
-  timer = 31;
-  timerStart();
+  resetTimer(21);
 
   // display the trivia question
   $('#trivia').append("<p class='lead'>" + triviaItem.question + '</p>');
@@ -119,12 +118,8 @@ function nextTrivia() {
   if (triviaStep < triviaList.length) {
     showTriviaOnScreen(triviaList[triviaStep]);
   } else {
-    // no more trivia
-    console.log('no more trivia');
-
     // stop the timer
-    isTimerRunning = false;
-    clearInterval(timerID);
+    stopTimer();
 
     // show game score and play again button
     $('#trivia').empty();
@@ -159,29 +154,18 @@ function nextTrivia() {
 /////////////////////////////////////////////
 function isCorrect(event) {
   if (convertHTMLEntity(answer) == convertHTMLEntity(event)) {
-    console.log('you got it');
     return true;
   }
-  console.log('not correct');
+
   return false;
 }
 
 function gameTime(event) {
-  console.log(triviaList);
-  console.log(triviaStep);
-  console.log(triviaList.length);
-  console.log(triviaList[triviaStep]);
-  console.log(answer);
-  console.log('converted answer: ' + convertHTMLEntity(answer));
-  console.log('this.html = ' + $(this).html());
-
   // stop the timer
-  isTimerRunning = false;
-  clearInterval(timerID);
+  stopTimer();
 
   // reset and start timer again
-  timer = 31;
-  timerStart();
+  resetTimer(21);
 
   if (isCorrect($(this).html())) {
     // increment score then show next trivia
@@ -196,7 +180,7 @@ function gameTime(event) {
 function resetGame() {
   // reset score, timer and question count
   score = 0;
-  timer = 31;
+  timer = 21;
   questions = 10;
 
   // reload browser
@@ -222,6 +206,17 @@ function updateTimerDisplay() {
   }
 
   $('#timer').text(timer);
+}
+
+function resetTimer(time) {
+  // reset and start timer again
+  timer = time;
+  timerStart();
+}
+
+function stopTimer() {
+  isTimerRunning = false;
+  clearInterval(timerID);
 }
 /////////////////////////////////////////////
 // Start this shit up!
