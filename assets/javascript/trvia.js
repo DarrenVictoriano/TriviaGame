@@ -154,6 +154,11 @@ function nextTrivia() {
     $('#status').append(
       "<button id='reload-game' class='btn btn-info'>Another One!</button>",
     );
+
+    // game over recap score
+    $('#timer').text(0);
+    $('#score').text(score);
+    $('#questCount').text(questions);
   }
 }
 
@@ -215,6 +220,9 @@ function updateTimerDisplay() {
   timer--;
 
   if (timer <= 0) {
+    // disable button
+    $('.choices-style').prop('disabled', true);
+
     // stop the timer
     isTimerRunning = false;
     clearInterval(timerID);
