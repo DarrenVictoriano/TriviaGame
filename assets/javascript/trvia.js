@@ -101,7 +101,11 @@ function showTriviaOnScreen(triviaItem) {
 
   // show the new array on screen
   for (i in newChoices) {
-    $('#choices').append("<p class='choices-style'>" + newChoices[i] + '</p>');
+    $('#choices').append(
+      "<button class='choices-style btn btn-outline-secondary btn-block'>" +
+        newChoices[i] +
+        '</button>',
+    );
   }
 
   // show game status
@@ -116,12 +120,16 @@ function showTriviaOnScreen(triviaItem) {
 function nextTrivia() {
   // check if we still have trivia unanswered
   if (triviaStep < triviaList.length) {
+    // enable button then show trivia
+    $('.choices-style').prop('disabled', false);
     showTriviaOnScreen(triviaList[triviaStep]);
   } else {
     // stop the timer
     stopTimer();
 
     // show game score and play again button
+    $('#status').empty();
+    $('#status').removeClass('status');
     $('#trivia').empty();
     $('#choices').empty();
     if (score > triviaList.length / 2) {
@@ -131,7 +139,7 @@ function nextTrivia() {
           score +
           ' out of ' +
           triviaList.length +
-          ' correctly.</p>',
+          ' questions correctly.</p>',
       );
     } else {
       $('#status').append('<h1>Game Over!</h1>');
@@ -140,7 +148,7 @@ function nextTrivia() {
           score +
           ' out of ' +
           triviaList.length +
-          ' correctly.</p>',
+          ' questions correctly.</p>',
       );
     }
     $('#status').append(
@@ -161,6 +169,9 @@ function isCorrect(event) {
 }
 
 function gameTime(event) {
+  // disable button after click
+  $('.choices-style').prop('disabled', true);
+
   // stop the timer
   stopTimer();
 
@@ -168,12 +179,18 @@ function gameTime(event) {
   resetTimer(21);
 
   if (isCorrect($(this).html())) {
+    // show user is correct
+    $('#status').prepend('<p class="text-success">You are correct!</p>');
+
     // increment score then show next trivia
     score++;
-    nextTrivia();
+    setTimeout(nextTrivia, 1500);
   } else {
     // show incorrect screen then next trivia
-    nextTrivia();
+    $('#status').prepend(
+      '<p class="text-danger">The Correct answer is: ' + answer + '</p>',
+    );
+    setTimeout(nextTrivia, 1500);
   }
 }
 
@@ -202,7 +219,11 @@ function updateTimerDisplay() {
     isTimerRunning = false;
     clearInterval(timerID);
 
-    nextTrivia();
+    // show the answer after time runs out
+    $('#status').prepend(
+      '<p class="text-danger">The Correct answer is: ' + answer + '</p>',
+    );
+    setTimeout(nextTrivia, 1500);
   }
 
   $('#timer').text(timer);

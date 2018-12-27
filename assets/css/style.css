@@ -10,9 +10,6 @@ hr {
   width: 300px;
 }
 
-.choices-style:hover {
-  font-weight: 900;
-  background-color: white;
-  border-radius: 100%;
-  cursor: pointer;
+.status {
+  height: 1em;
 }
